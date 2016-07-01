@@ -29,7 +29,7 @@ object Build extends Build {
   lazy val root = project(id = "play2-war",
     base = file("."),
     settings = commonSettings ++ mavenSettings ++ Seq(
-      publishArtifact := false)) aggregate (play2WarCoreCommon, play2WarCoreservlet30, play2WarCoreservlet25, play2WarCoreservlet31, play2WarPlugin, play2WarIntegrationTests)
+      publishArtifact := false)) aggregate (play2WarCoreCommon, play2WarCoreservlet30, play2WarPlugin, play2WarIntegrationTests)
 
   //
   // Servlet implementations
@@ -40,11 +40,11 @@ object Build extends Build {
       libraryDependencies += playDependency,
       libraryDependencies += "javax.servlet" % "servlet-api" % "2.5" % "provided->default"))
 
-  lazy val play2WarCoreservlet31 = project(id = "play2-war-core-servlet31",
-    base = file("core/servlet31"),
-    settings = commonSettings ++ mavenSettings ++ Seq(
-      libraryDependencies += playDependency,
-      libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided->default")) dependsOn play2WarCoreCommon
+//  lazy val play2WarCoreservlet31 = project(id = "play2-war-core-servlet31",
+//    base = file("core/servlet31"),
+//    settings = commonSettings ++ mavenSettings ++ Seq(
+//      libraryDependencies += playDependency,
+//      libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided->default")) dependsOn play2WarCoreCommon
 
   lazy val play2WarCoreservlet30 = project(id = "play2-war-core-servlet30",
     base = file("core/servlet30"),
@@ -52,11 +52,11 @@ object Build extends Build {
       libraryDependencies += playDependency,
       libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.0.1" % "provided->default")) dependsOn play2WarCoreCommon
 
-  lazy val play2WarCoreservlet25 = project(id = "play2-war-core-servlet25",
-    base = file("core/servlet25"),
-    settings = commonSettings ++ mavenSettings ++ Seq(
-      libraryDependencies += playDependency,
-      libraryDependencies += "javax.servlet" % "servlet-api" % "2.5" % "provided->default")) dependsOn play2WarCoreCommon
+//  lazy val play2WarCoreservlet25 = project(id = "play2-war-core-servlet25",
+//    base = file("core/servlet25"),
+//    settings = commonSettings ++ mavenSettings ++ Seq(
+//      libraryDependencies += playDependency,
+//      libraryDependencies += "javax.servlet" % "servlet-api" % "2.5" % "provided->default")) dependsOn play2WarCoreCommon
 
   //
   // Plugin
@@ -108,16 +108,16 @@ object Build extends Build {
   object BuildSettings {
 
     val buildOrganization = "com.github.play2war"
-    val defaultPlay2Version = "2.4.0"
+    val defaultPlay2Version = "2.5.4"
     val play2Version = sys.props.get("play2.version").filterNot(_.isEmpty).getOrElse(defaultPlay2Version)
-    val defaultBuildVersion = "1.4-beta2-SNAPSHOT"
+    val defaultBuildVersion = "1.5-beta1-SNAPSHOT"
     val buildVersion = sys.props.get("play2war.version").filterNot(_.isEmpty).getOrElse(defaultBuildVersion)
     val buildScalaVersion210 = "2.10.5"
-    val buildScalaVersion211 = "2.11.6"
-    val buildScalaVersion = sys.props.get("play2war.sbt.scala211").map(p => buildScalaVersion211).getOrElse(buildScalaVersion210)
+    val buildScalaVersion211 = "2.11.8"
+    val buildScalaVersion = buildScalaVersion211 //sys.props.get("play2war.sbt.scala211").map(p => buildScalaVersion211).getOrElse(buildScalaVersion210)
     val buildScalaVersionForSbt = "2.10.5"
     val buildScalaVersionForSbtBinaryCompatible = CrossVersion.binaryScalaVersion(buildScalaVersionForSbt)
-    val buildSbtVersion   = "0.13.8"
+    val buildSbtVersion   = "0.13.11"
     val buildSbtVersionBinaryCompatible = "0.13"
 
     val buildSettings = Defaults.defaultSettings ++ Seq(

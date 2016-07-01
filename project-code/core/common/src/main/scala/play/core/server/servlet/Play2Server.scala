@@ -38,7 +38,7 @@ object Play2WarServer {
 
   val context = ApplicationLoader.createContext(
     new Environment(new File("."), ApplicationLoader.getClass.getClassLoader, Mode.Prod))
-  Logger.configure(context.environment)
+  LoggerConfigurator(context.environment.classLoader).foreach { _.configure(context.environment) }
 
   lazy val configuration = Play.current.configuration
 
@@ -110,7 +110,7 @@ private[servlet] class WarApplication(val mode: Mode.Mode, contextPath: Option[S
     val context = ApplicationLoader.createContext(environment, initialSettings = initialSettings)
     // Because of https://play.lighthouseapp.com/projects/82401-play-20/tickets/275, reconfigure Logger
     // without substitutions
-    Logger.configure(context.environment)
+    LoggerConfigurator(context.environment.classLoader).foreach { _.configure(context.environment) }
     val loader = ApplicationLoader(context)
     loader.load(context)
   }
