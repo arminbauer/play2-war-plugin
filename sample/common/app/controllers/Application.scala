@@ -3,10 +3,12 @@ package controllers
 import java.io._
 
 import play.api.mvc._
-import play.api.libs.Comet
+import play.api.libs.{Files, Comet}
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api._
+import play.api.Play.current
 
 import scala.concurrent.duration._
 import scala.concurrent.Future
@@ -47,7 +49,7 @@ object Application extends Controller {
   }
 
   def redirectLanding = Action { implicit request =>
-    val flashResult = flash.get("success").getOrElse("not found")
+    val flashResult = request.flash.get("success").getOrElse("not found")
     Ok(views.html.redirectLanding(flashResult))
   }
 
@@ -82,7 +84,7 @@ object Application extends Controller {
     val data = sb.toString.getBytes
     val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(data))
 
-    SimpleResult(
+    Result(
       header = ResponseHeader(200, Map(CONTENT_LENGTH -> data.length.toString)),
       body = dataContent)
   }
@@ -138,28 +140,28 @@ object Application extends Controller {
     Ok(views.html.uploadForm())
   }
 
+  private def displayUploadDetails(uploadedFile: MultipartFormData.FilePart[Files.TemporaryFile]) = {
+    val filename = uploadedFile.filename
+    val contentType = uploadedFile.contentType.getOrElse("Unknown")
+    val size = uploadedFile.ref.file.length()
+    Ok( s"""File uploaded: $filename
+           |Content type: $contentType
+           |Size: $size""".stripMargin)
+  }
+
   def upload2 = Action { request =>
-    request.body.asMultipartFormData.map { b =>
-        b.file("uploadedFile").map { uploadedFile =>
-          import java.io.File
-          val filename = uploadedFile.filename
-          val contentType = uploadedFile.contentType
-          Ok("File uploaded: " + filename)
-        }.getOrElse {
-          Ok("Error when uploading")
-        }
+    {
+      for {
+        data <- request.body.asMultipartFormData
+        uploadedFile <- data.file("uploadedFile")
+      } yield displayUploadDetails(uploadedFile)
     }.getOrElse {
        Ok("Error when uploading")
     }
   }
-  
+
   def upload = Action(parse.multipartFormData) { request =>
-    request.body.file("uploadedFile").map { uploadedFile =>
-      import java.io.File
-      val filename = uploadedFile.filename
-      val contentType = uploadedFile.contentType
-      Ok("File uploaded: " + filename)
-    }.getOrElse {
+    request.body.file("uploadedFile").map(displayUploadDetails).getOrElse {
       Ok("Error when uploading")
     }
   }
@@ -191,6 +193,15 @@ object Application extends Controller {
     Redirect(routes.Application.redirectLanding).flashing(
       "success" -> "found"
     )
+  }
+
+  def unmanagedlib = Action {
+    val maybeUnmanagedlib = Play.resource("unmanagedlib.txt")
+
+    maybeUnmanagedlib match {
+      case Some(_) => Ok("")
+      case None => NotFound
+    }
   }
 
 }

@@ -1,18 +1,28 @@
 package controllers;
 
-import java.util.*;
+import play.Logger;
+import play.libs.F;
+import play.libs.ws.WS;
+import play.libs.ws.WSResponse;
+import play.mvc.BodyParser;
+import play.mvc.Controller;
+import play.mvc.Http.MultipartFormData;
+import play.mvc.Result;
+
 import java.util.concurrent.TimeUnit;
 
-import play.mvc.*;
-import play.mvc.Http.*;
-import play.data.*;
-import play.*;
-
-import views.html.*;
-
-import models.*;
-
 public class JavaApplication extends Controller {
+
+  public static F.Promise<Result> asyncResult() {
+      String url = controllers.routes.Application.httpVersion().absoluteURL(request());
+      Logger.info("will make a web request to: " + url);
+      return WS.url(url).get().map(new F.Function<WSResponse, Result>() {
+          @Override
+          public Result apply(WSResponse response) throws Throwable {
+              return ok(response.getBody());
+          }
+      });
+  }
 
   public static Result upload() {
     MultipartFormData body = request().body().asMultipartFormData();
@@ -22,7 +32,8 @@ public class JavaApplication extends Controller {
     } else {
       String fileName = uploadedFile.getFilename();
       String contentType = uploadedFile.getContentType();
-      return ok("File uploaded:" + fileName);
+      long size = uploadedFile.getFile().length();
+      return ok("File uploaded:" + fileName + "\nContent type: " + contentType + "\nSize: " + size);
     }
   }
 

@@ -39,6 +39,10 @@ trait ServletContainer {
 
 }
 
+trait Servlet31Container extends ServletContainer {
+  def keyServletContainer = "31"
+}
+
 trait Servlet30Container extends ServletContainer {
   def keyServletContainer = "30"
 }
@@ -81,7 +85,7 @@ trait CargoContainerManager extends WarContext {
     val installer = new ZipURLInstaller(new URL(containerUrlToDownload))
     println("Download container done")
 
-    Option(System.getenv("http_proxy")).map { systemProxy =>
+    Option(System.getenv("http_proxy")).foreach { systemProxy =>
       println(s"Using system proxy '$systemProxy'")
       val uri = new java.net.URI(systemProxy)
       val proxy = new org.codehaus.cargo.container.installer.Proxy()
@@ -100,11 +104,14 @@ trait CargoContainerManager extends WarContext {
     configuration.setProperty(GeneralPropertySet.LOGGING, LoggingLevel.MEDIUM.getLevel)
 
     getJavaVersion match {
-      case "java6" => // Nothing, use current JVM
-      case "java7" => {
-        val java7Home = Option(System.getProperty("java7.home")).map(p => p).getOrElse(throw new RuntimeException("-Djava7.home not defined"))
-        configuration.setProperty(GeneralPropertySet.JAVA_HOME, java7Home)
+      case "java8" => {
+        // Try to set java_home from config property
+        Option(System.getProperty("java8.home")).foreach { home =>
+          configuration.setProperty(GeneralPropertySet.JAVA_HOME, home)
+        }
+        // Use current JVM otherwise
       }
+      case _ => throw new RuntimeException("Play 2.4 only supports java8")
     }
 
     val container =
@@ -150,7 +157,7 @@ trait CargoContainerManagerFixture extends BeforeAndAfterAll with CargoContainer
   def keyWarPath: String
 
   abstract override def beforeAll(configMap: Map[String, Any]) {
-    val warPath = configMap.get(keyWarPath).getOrElse(throw new Exception("no war path defined")).asInstanceOf[String]
+    val warPath = configMap.getOrElse(keyWarPath, throw new Exception("no war path defined")).asInstanceOf[String]
 
     startContainer(warPath, stopOnExit = false)
   }
@@ -166,14 +173,8 @@ trait JavaVersion {
 
 }
 
-trait Java6 extends JavaVersion {
+trait Java8 extends JavaVersion {
 
-  override def getJavaVersion = "java6"
-
-}
-
-trait Java7 extends JavaVersion {
-
-  override def getJavaVersion = "java7"
+  override def getJavaVersion = "java8"
 
 }

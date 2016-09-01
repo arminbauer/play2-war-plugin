@@ -1,15 +1,17 @@
 # WAR Plugin for Play framework 2.x
 
     Current versions:
-        Play 2.0 -> 2.0.4 : 0.8.1
-        Play 2.0.5+       : 0.8.2
-        Play 2.1 -> 2.1.3 : 1.0.2
-        Play 2.1.4+       : 1.1.1
-        Play 2.2.x        : 1.2-beta4
+        Play 2.2.x          : 1.2.1
+        Play 2.3.0 -> 2.3.1 : 1.3-beta1 (Scala 2.10 & 2.11)
+        Play 2.3.2+         : 1.3-beta3 (Scala 2.10 & 2.11)
+        Play 2.4.x          : 1.4-beta1 (Scala 2.10 & 2.11)
+        Play 2.5.x          : Not supported yet
 
     Project-status: STABLE
-    
-[![Build Status](https://play-war.ci.cloudbees.com/job/Play_2_War_Run_integration_tests_-_Play_21x/badge/icon)](https://play-war.ci.cloudbees.com/job/Play_2_War_Run_integration_tests_-_Play_21x/)
+
+[![Build Status](https://play-war.ci.cloudbees.com/job/Play_2_War_Run_integration_tests_-_Play_22x/badge/icon)](https://play-war.ci.cloudbees.com/job/Play_2_War_Run_integration_tests_-_Play_22x/)
+
+See also [archived versions](#versions-not-supported-anymore).
 
 This project is a module for Play framework 2 to package your apps into standard WAR packages. It can be used with **Servlet 3.1, 3.0 and 2.5 containers** (Tomcat 6/7/8, Jetty 7/8/9, JBoss 5/6/7/8, ...)
 
@@ -18,18 +20,16 @@ Why choosing WAR packaging when native Play 2 is a better deployment model (feat
 - SSL is available, easy to configure and well documented on JBoss, Tomcat, ... when SSL is newer on Play 2.1
 - You need to add extra Servlet filters specific to your company (to handle SSO, ...)
 
-You can trust this plugin because it is [heavily tested](https://play-war.ci.cloudbees.com/job/Play_2_War_Run_integration_tests_-_Play_22x/lastCompletedBuild/testReport/), with hundreds of integration tests run on :
+You can trust this plugin because it is [heavily tested](https://play-war.ci.cloudbees.com/job/Play_2_War_Run_integration_tests_-_Play_23x/lastCompletedBuild/testReport/), with hundreds of integration tests run on :
 - several open-source application servers (Tomcat 6/7/8, Jetty 7/8/9)
 - *all versions* of Play Framework 2.x
-
-Live demo: JBoss7@Cloudbees : http://servlet30.play-war.cloudbees.net/
 
 Other references built with Play 2 and Play2War:
  - [Factile](http://factile.net/) (Survey platform)
 
 ## What's new ?
 
-See [releases and changelog](https://github.com/dlecan/play2-war-plugin/releases/).
+See [releases and changelog](https://github.com/play2war/play2-war-plugin/releases/).
 
 ## Features
 <table>
@@ -46,7 +46,7 @@ See [releases and changelog](https://github.com/dlecan/play2-war-plugin/releases
   <tr>
   <td colspan="2">Availability</td>
   <td><img src="http://openclipart.org/image/800px/svg_to_png/161503/OK-1.png" height="20"></td>
-  <td><img src="http://openclipart.org/image/800px/svg_to_png/161503/OK-1.png" height="20"></td>
+  <td><img src="http://openclipart.org/image/800px/svg_to_png/161503/OK-1.png" height="20"><br/>P2W 1.2+</td>
   <td><img src="http://openclipart.org/image/800px/svg_to_png/161503/OK-1.png" height="20"></td>
   <td><img src="http://openclipart.org/image/800px/svg_to_png/161503/OK-1.png" height="20"></td>
   </tr>
@@ -149,7 +149,7 @@ See [releases and changelog](https://github.com/dlecan/play2-war-plugin/releases
   <td><img src="http://openclipart.org/image/800px/svg_to_png/161503/OK-1.png" height="20"></td>
   <td><img src="http://openclipart.org/image/800px/svg_to_png/161503/OK-1.png" height="20">
     <a href="http://servlet30.play-war.cloudbees.net/" title="Play 2 WAR demo hosted at Cloudbees PaaS provider">Demo</a> @Cloudbees
-    <br/><a href="https://github.com/dlecan/play2-war-plugin/wiki/FAQ#jboss7-deployment-at-cloudbees">Need extra configuration</a> when deploying
+    <br/><a href="https://github.com/play2war/play2-war-plugin/wiki/FAQ#jboss7-deployment-at-cloudbees">Need extra configuration</a> when deploying
   </td>
   </tr>
   <tr>
@@ -190,23 +190,23 @@ The plugin may work on others containers, such as Weblogic (not tested yet).
 
 ## Configuration
 
-See [Configuration](https://github.com/dlecan/play2-war-plugin/wiki/Configuration).
+See [Configuration](https://github.com/play2war/play2-war-plugin/wiki/Configuration).
 
 ## Usage
 
-See [Usage](https://github.com/dlecan/play2-war-plugin/wiki/Usage).
+See [Usage](https://github.com/play2war/play2-war-plugin/wiki/Usage).
 
 ## Deployment
 
-See [Deployment](https://github.com/dlecan/play2-war-plugin/wiki/Deployment).
+See [Deployment](https://github.com/play2war/play2-war-plugin/wiki/Deployment).
 
 ## FAQ
 
-See [FAQ](https://github.com/dlecan/play2-war-plugin/wiki/FAQ).
+See [FAQ](https://github.com/play2war/play2-war-plugin/wiki/FAQ).
 
 ## Issues
 
-Please file issues here: https://github.com/dlecan/play2-war-plugin/issues.
+Please file issues here: https://github.com/play2war/play2-war-plugin/issues.
 
 ## Continous integration
 
@@ -214,11 +214,11 @@ Watch it in action here : [https://play-war.ci.cloudbees.com/](https://play-war.
 
 ## How to help ?
 
-Discover [how you can help the project](https://github.com/dlecan/play2-war-plugin/wiki/How-to-help).
+Discover [how you can help the project](https://github.com/play2war/play2-war-plugin/wiki/How-to-help).
 
 ## Contributors
 
-[Ivan Meredith](https://github.com/hadashi), [Rossi Oddet](https://github.com/roddet), [Sam Spycher](https://github.com/samspycher), [Naoki Takezoe](https://github.com/takezoe), [Quinn Slack](https://github.com/sqs), [Eugene Platonov](https://github.com/jozic), [László Zsolt Kustra](https://github.com/kustra).
+[Ivan Meredith](https://github.com/hadashi), [Rossi Oddet](https://github.com/roddet), [Sam Spycher](https://github.com/samspycher), [Naoki Takezoe](https://github.com/takezoe), [Quinn Slack](https://github.com/sqs), [Eugene Platonov](https://github.com/jozic), [László Zsolt Kustra](https://github.com/kustra), [Yann Simon](https://github.com/yanns).
 
 ## Licence
 
@@ -242,3 +242,10 @@ limitations under the License.
 <img src="http://web-static-cloudfront.s3.amazonaws.com/images/badges/BuiltOnDEV.png"/>
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/bf76ccaad18897abc9d723474033290c "githalytics.com")](http://githalytics.com/dlecan/play2-war-plugin)
+
+## Versions not supported anymore
+
+    Play 2.0 -> 2.0.4   : 0.8.1
+    Play 2.0.5+         : 0.8.2
+    Play 2.1 -> 2.1.3   : 1.0.2
+    Play 2.1.4+         : 1.1.1
