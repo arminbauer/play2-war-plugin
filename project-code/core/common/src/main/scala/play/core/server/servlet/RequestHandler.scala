@@ -111,6 +111,7 @@ trait HttpServletRequestHandler extends RequestHandler {
         val body: HttpEntity = result.body
 
         Logger("play").warn("Sending simple result: " + result)
+        Logger("play").warn("Body contentType: " + body.contentType)
 
         httpResponse.setStatus(status)
         setHeaders(headers, httpResponse)
