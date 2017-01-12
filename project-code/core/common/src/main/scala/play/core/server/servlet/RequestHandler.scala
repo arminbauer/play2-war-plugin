@@ -22,7 +22,7 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse, Cookie => Se
 import akka.stream.scaladsl.{Source, StreamConverters}
 import akka.util.ByteString
 import play.api.{Logger, _}
-import play.api.http.HeaderNames.{CONTENT_LENGTH, X_FORWARDED_FOR}
+import play.api.http.HeaderNames.{CONTENT_LENGTH, X_FORWARDED_FOR, CONTENT_TYPE}
 import play.api.http.{HeaderNames, HttpEntity, HttpProtocol}
 import play.api.libs.streams.Accumulator
 import play.api.mvc.{WebSocket, _}
@@ -108,12 +108,18 @@ trait HttpServletRequestHandler extends RequestHandler {
 
         val status = result.header.status
         val headers = result.header.headers
-        val body: HttpEntity = result.body
-
-        Logger("play").warn("Sending simple result: " + result)
-
+        val body: HttpEntity = result.body        
+        
         httpResponse.setStatus(status)
         setHeaders(headers, httpResponse)
+        
+        body.contentType.foreach { contentType =>
+          if (!httpResponse.containsHeader(CONTENT_TYPE)) {
+            httpResponse.setHeader(CONTENT_TYPE, contentType)
+          }
+        }
+
+        Logger("play").warn("Sending simple result: " + result)                
 
         val sink = StreamConverters.fromOutputStream(httpResponse.getOutputStream)
         val future = body.dataStream.runWith(sink)
