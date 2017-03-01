@@ -152,8 +152,8 @@ abstract class Play2GenericServletRequestHandler(val servletRequest: HttpServlet
     val httpMethod = servletRequest.getMethod
     val isSecure = servletRequest.isSecure
 
-    val clientCertificatesFromRequest: Array[X509Certificate] = Option(servletRequest.getAttribute("javax.servlet.request.X509Certificate")).map(value => value.asInstanceOf).orNull
-    val clientCertificates = Option(clientCertificatesFromRequest).map(certs => certs.toSeq).getOrElse(Seq.empty)
+    val clientCertificatesFromRequest: Array[X509Certificate] = Option(servletRequest.getAttribute("javax.servlet.request.X509Certificate")).map(value => value.asInstanceOf[Array[X509Certificate]]).orNull
+    val clientCertificates: Seq[X509Certificate] = Option(clientCertificatesFromRequest).map(certs => certs.toSeq).orNull
 
     def rRemoteAddress = {
       val remoteAddress = servletRequest.getRemoteAddr
