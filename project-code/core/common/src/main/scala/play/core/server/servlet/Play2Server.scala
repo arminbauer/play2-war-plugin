@@ -36,10 +36,6 @@ object Play2WarServer {
 
   }
 
-  val context = ApplicationLoader.createContext(
-    new Environment(new File("."), ApplicationLoader.getClass.getClassLoader, Mode.Prod))
-  LoggerConfigurator(context.environment.classLoader).foreach { _.configure(context.environment) }
-
   lazy val configuration = Play.current.configuration
 
   private val started = new AtomicBoolean(true)
@@ -104,12 +100,10 @@ private[servlet] class WarApplication(val mode: Mode.Mode, contextPath: Option[S
       .filterNot(_.isEmpty)
       .map(cp => cp + (if (cp.endsWith("/")) "" else "/"))
       .fold(Map.empty[String, AnyRef]) { cp ⇒
-        Logger("play").info(s"Force Play 'application.context' to '$cp'")
-        Map("application.context" -> cp)
+        Logger("play").info(s"Force Play 'play.http.context' to '$cp'")
+        Map("play.http.context" -> cp)
       }
     val context = ApplicationLoader.createContext(environment, initialSettings = initialSettings)
-    // Because of https://play.lighthouseapp.com/projects/82401-play-20/tickets/275, reconfigure Logger
-    // without substitutions
     LoggerConfigurator(context.environment.classLoader).foreach { _.configure(context.environment) }
     val loader = ApplicationLoader(context)
     loader.load(context)
