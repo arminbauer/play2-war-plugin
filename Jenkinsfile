@@ -33,30 +33,40 @@ pipeline {
 
     stages {
         stage('Patch SBT build') {
-            script {
-                mysh "echo '\n\npublishTo := Some(\"Artifactory Realm\" at \"https://docker.dev.idnow.de/artifactory/sbt;build.timestamp=\" + new java.util.Date().getTime)' >> project-code/build.sbt"
+            steps {
+                script {
+                    mysh "echo '\n\npublishTo := Some(\"Artifactory Realm\" at \"https://docker.dev.idnow.de/artifactory/sbt;build.timestamp=\" + new java.util.Date().getTime)' >> project-code/build.sbt"
+                }
             }
         }
         stage('Clean') {
-            script { 
-                runSbt("clean")
+            steps {
+                script {
+                        runSbt("clean")
+                    }
+                }
             }
         }
         stage('Update') {
-            script {
-                runSbt("update")
+            steps {
+                script {
+                    runSbt("update")
+                }
             }
-
         }
         stage('Compile') {
-            script {
-                runSbt("compile")
+            steps {
+                script {
+                    runSbt("compile")
+                }
             }
         }
         stage('Package') {
-            script {
-                runSbt("publishLocal publish")
-                archiveArtifacts artifacts: 'project-code/plugin/target/**/play2-war-plugin*.jar', excludes: 'project-code/plugin/target/**/play2-war-plugin*-javadoc.jar, project-code/plugin/target/**/play2-war-plugin*-sources.jar', fingerprint: true
+            steps {
+                script {
+                    runSbt("publishLocal publish")
+                    archiveArtifacts artifacts: 'project-code/plugin/target/**/play2-war-plugin*.jar', excludes: 'project-code/plugin/target/**/play2-war-plugin*-javadoc.jar, project-code/plugin/target/**/play2-war-plugin*-sources.jar', fingerprint: true
+                }
             }
         }
     }
