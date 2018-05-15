@@ -42,8 +42,7 @@ pipeline {
         stage('Clean') {
             steps {
                 script {
-                        runSbt("clean")
-                    }
+                    runSbt("clean")
                 }
             }
         }
