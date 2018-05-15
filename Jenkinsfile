@@ -22,62 +22,55 @@ def isBuildNotFailed() {
 	return currentBuild.result == null || currentBuild.result == 'SUCCESS' 
 }
 
-properties([
-		buildDiscarder(logRotator(artifactDaysToKeepStr: '10', artifactNumToKeepStr: '10', daysToKeepStr: '180', numToKeepStr: '10')),
-		// [$class: 'ScannerJobProperty', doNotScan: false],
-		disableConcurrentBuilds(),
-		[
-				$class                       : 'ThrottleJobProperty',
-				categories                   : [],
-				limitOneJobWithMatchingParams: true,
-				maxConcurrentPerNode         : 0,
-				maxConcurrentTotal           : 0,
-				paramsToUseForLimit          : '',
-				throttleEnabled              : true,
-				throttleOption               : 'project'
-		]
-])
-node {
-	throttle(['SBT']) {
-		ansiColor('xterm') {
-			stage('Patch SBT build') {
-				mysh "echo '\n\npublishTo := Some(\"Artifactory Realm\" at \"https://docker.dev.idnow.de/artifactory/sbt;build.timestamp=\" + new java.util.Date().getTime)' >> project-code/build.sbt"
-			}
-			stage('Clean') {
-				runSbt("clean")
-			}
-			stage('Update') {
-				runSbt("update")
-			}
-			stage('Compile') {
-				runSbt("compile")
-			}
-			stage('Package') {
-				runSbt("publishLocal publish")
-				archiveArtifacts artifacts: 'project-code/plugin/target/**/play2-war-plugin*.jar', excludes: 'project-code/plugin/target/**/play2-war-plugin*-javadoc.jar, project-code/plugin/target/**/play2-war-plugin*-sources.jar', fingerprint: true
-			}
+pipeline {
+
+	agent any
+
+	options {
+		ansiColor('xterm')
+		disableConcurrentBuilds()
+	}
+
+	stages {
+		stage('Patch SBT build') {
+			mysh "echo '\n\npublishTo := Some(\"Artifactory Realm\" at \"https://docker.dev.idnow.de/artifactory/sbt;build.timestamp=\" + new java.util.Date().getTime)' >> project-code/build.sbt"
 		}
-		stage('Post') {
-			warnings(
-				canComputeNew: false,
-				canResolveRelativePaths: false,
-				categoriesPattern: '',
-				consoleParsers: [[parserName: 'Scala Compiler (scalac)']],
-				defaultEncoding: '',
-				excludePattern: '',
-				healthy: '',
-				includePattern: '',
-				messagesPattern: '',
-				unHealthy: ''
-			)
+		stage('Clean') {
+			runSbt("clean")
+		}
+		stage('Update') {
+			runSbt("update")
+		}
+		stage('Compile') {
+			runSbt("compile")
+		}
+		stage('Package') {
+			runSbt("publishLocal publish")
+			archiveArtifacts artifacts: 'project-code/plugin/target/**/play2-war-plugin*.jar', excludes: 'project-code/plugin/target/**/play2-war-plugin*-javadoc.jar, project-code/plugin/target/**/play2-war-plugin*-sources.jar', fingerprint: true
+		}
+	}
+	post {
+		always {
 			step([$class: 'CordellWalkerRecorder'])
+			warnings(
+					canComputeNew: false,
+					canResolveRelativePaths: false,
+					categoriesPattern: '',
+					consoleParsers: [[parserName: 'Scala Compiler (scalac)']],
+					defaultEncoding: '',
+					excludePattern: '',
+					healthy: '',
+					includePattern: '',
+					messagesPattern: '',
+					unHealthy: ''
+			)
 			cleanWs()
-			// step([
-			// 		$class: 'Mailer',
-			// 		notifyEveryUnstableBuild: true,
-			// 		recipients: 'dev@idnow.de',
-			// 		sendToIndividuals: true
-			// ])
+			step([
+					$class                  : 'Mailer',
+					notifyEveryUnstableBuild: true,
+					recipients              : 'dev@idnow.de',
+					sendToIndividuals       : true
+			])
 		}
 	}
 }
