@@ -40,16 +40,6 @@ properties([
 node {
 	throttle(['SBT']) {
 		ansiColor('xterm') {
-			stage('Clone') {
-				checkout([
-					$class: 'GitSCM',
-					branches: [[name: "*/${env.BRANCH_NAME}"]],
-					doGenerateSubmoduleConfigurations: false,
-					extensions: [[$class: 'CleanBeforeCheckout']],
-					submoduleCfg: [],
-					userRemoteConfigs: [[credentialsId: 'jenkins-generated-ssh-key', url: 'ssh://akaempfe@172.17.0.1/idnow/workspace/idnow/play2-war-plugin']]]
-				)
-			}
 			stage('Patch SBT build') {
 				mysh "echo '\n\npublishTo := Some(\"Artifactory Realm\" at \"https://docker.dev.idnow.de/artifactory/sbt;build.timestamp=\" + new java.util.Date().getTime)' >> project-code/build.sbt"
 			}
