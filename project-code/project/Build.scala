@@ -117,7 +117,7 @@ object Build extends Build {
     val buildScalaVersion = buildScalaVersion211 //sys.props.get("play2war.sbt.scala211").map(p => buildScalaVersion211).getOrElse(buildScalaVersion210)
     val buildScalaVersionForSbt = "2.10.5"
     val buildScalaVersionForSbtBinaryCompatible = CrossVersion.binaryScalaVersion(buildScalaVersionForSbt)
-    val buildSbtVersion   = "0.13.11"
+    val buildSbtVersion   = "0.13.17"
     val buildSbtVersionBinaryCompatible = "0.13"
 
     val buildSettings = Defaults.defaultSettings ++ Seq(
@@ -139,7 +139,8 @@ object Build extends Build {
     publishMavenStyle := false,
     bintrayReleaseOnPublish := false,
     bintrayRepository := "sbt-plugins",
-    bintrayOrganization := Some("play2war")
+    bintrayOrganization := Some("play2war"),
+	publishTo := Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/sbt")
   )
 
   def mavenSettings = commonIvyMavenSettings ++ Seq(
@@ -148,9 +149,9 @@ object Build extends Build {
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) {
-        Some("snapshots" at nexus + "content/repositories/snapshots")
+        Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/sbt")
       } else {
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+        Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/sbt")
       }
     },
     pomExtra :=
