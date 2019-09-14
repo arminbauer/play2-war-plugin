@@ -145,7 +145,7 @@ object Build extends Build {
 
   def mavenSettings = commonIvyMavenSettings ++ Seq(
     publishMavenStyle := true,
-    pomIncludeRepository := { _ => false },
+    pomIncludeRepository := { _ => true },
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) {
@@ -194,6 +194,6 @@ object Build extends Build {
 
   }
 
-  def project(id: String, base: File, settings: Seq[Def.Setting[_]] = Nil) =  
+  def project(id: String, base: File, settings: Seq[Def.Setting[_]] = Nil) =
     Project(id, base, settings = settings)
 }
