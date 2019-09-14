@@ -63,7 +63,7 @@ object Build extends Build {
   //
   lazy val play2WarPlugin = Project(id = "play2-war-plugin",
     base = file("plugin"),
-    settings = commonSettings ++ mavenSettings ++ ivySettings ++ Seq(
+    settings = commonSettings ++ ivySettings ++ mavenSettings ++ Seq(
       publishArtifact := true,
       scalaVersion := buildScalaVersionForSbt,
       scalaBinaryVersion := buildScalaVersionForSbtBinaryCompatible,
