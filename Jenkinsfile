@@ -29,14 +29,18 @@ pipeline {
     stage('Compile') {
       steps {
         script {
-          sh("sbt clean update compile")
+          dir('project-code') {
+            sh("sbt clean update compile")
+          }
         }
       }
     }
     stage('Package') {
       steps {
         script {
-          sh ("sbt publishLocal publish")
+          dir('project-code') {
+            sh ("sbt publishLocal publish")
+          }
           archiveArtifacts artifacts: 'project-code/plugin/target/**/play2-war-plugin*.jar', excludes: 'project-code/plugin/target/**/play2-war-plugin*-javadoc.jar, project-code/plugin/target/**/play2-war-plugin*-sources.jar', fingerprint: true
         }
       }
