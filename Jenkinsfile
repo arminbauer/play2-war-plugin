@@ -1,4 +1,4 @@
-
+def ARTIFACTORY_HOST="docker.dev.idnow.de"
 pipeline {
 
   agent any
