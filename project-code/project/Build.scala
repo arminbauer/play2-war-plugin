@@ -140,7 +140,7 @@ object Build extends Build {
     bintrayReleaseOnPublish := false,
     bintrayRepository := "sbt-plugins",
     bintrayOrganization := Some("play2war"),
-	publishTo := Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/sbt")
+	publishTo := Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/ivy")
   )
 
   def mavenSettings = commonIvyMavenSettings ++ Seq(
@@ -149,9 +149,9 @@ object Build extends Build {
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) {
-        Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/sbt")
+        Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/maven")
       } else {
-        Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/sbt")
+        Some("Artifactory Realm" at "https://docker.dev.idnow.de/artifactory/maven")
       }
     },
     pomExtra :=
