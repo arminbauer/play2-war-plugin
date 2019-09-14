@@ -1,96 +1,51 @@
-def mysh(cmd) {
-    sh('#!/bin/sh -e\n' + cmd)
-}
-
-def runSbt(cmd) {
-    withCredentials([
-        usernamePassword(
-            credentialsId: 'jenkins-artifactory',
-            passwordVariable: 'DOCKER_PASS',
-            usernameVariable: 'DOCKER_USER')
-    ]) {
-        try {
-            mysh "cd project-code && sbt -Dsbt.override.build.repos=true -Dsbt.boot.realm='Artifactory Realm' -Dsbt.boot.host='docker.dev.idnow.de' -Dsbt.boot.user='${env.DOCKER_USER}' -Dsbt.boot.password='${env.DOCKER_PASS}' ${cmd}"
-        } catch (err) {
-            currentBuild.displayName = "${currentBuild.displayName} : ${cmd} failed\n"
-            currentBuild.result = 'FAILED'
-        }
-    }
-}
-
-def isBuildNotFailed() {
-    return currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-}
 
 pipeline {
 
-    agent any
+  agent any
 
-    options {
-        ansiColor('xterm')
-        disableConcurrentBuilds()
-    }
+  options {
+    ansiColor('xterm')
+    disableConcurrentBuilds()
+  }
+  environment {
+    SBT_CREDENTIALS="$HOME/.ivy2/.credentials"
+    SBT_OPTS="-Dsbt.override.build.repos=true -Dfile.encoding=UTF8 -Xms4096m -Xmx4096m -Xss1M -XX:+CMSClassUnloadingEnabled -Dsbt.log.noformat=true"
+  }
 
-    stages {
-        stage('Patch SBT build') {
-            steps {
-                script {
-                    mysh "echo '\n\npublishTo := Some(\"Artifactory Realm\" at \"https://docker.dev.idnow.de/artifactory/sbt;build.timestamp=\" + new java.util.Date().getTime)' >> project-code/build.sbt"
-                }
-            }
+  stages {
+    stage ('Patch build.sbt') {
+      steps {
+        script {
+          withCredentials([usernamePassword(credentialsId: 'jenkins-artifactory', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+            sh """
+              echo 'publishTo := Some("Artifactory Realm" at "https://${ARTIFACTORY_HOST}/artifactory/sbt;build.timestamp=" + new java.util.Date().getTime)' >> project-code/build.sbt;
+              echo 'credentials += Credentials("Artifactory Realm", "${ARTIFACTORY_HOST}", "${env.DOCKER_USER}", "${env.DOCKER_PASS}")' >> project-code/build.sbt;
+              echo 'resolvers += "Artifactory" at "https://${ARTIFACTORY_HOST}/artifactory/sbt/"' >> project-code/build.sbt;
+            """
+          }
         }
-        stage('Clean') {
-            steps {
-                script {
-                    runSbt("clean")
-                }
-            }
-        }
-        stage('Update') {
-            steps {
-                script {
-                    runSbt("update")
-                }
-            }
-        }
-        stage('Compile') {
-            steps {
-                script {
-                    runSbt("compile")
-                }
-            }
-        }
-        stage('Package') {
-            steps {
-                script {
-                    runSbt("publishLocal publish")
-                    archiveArtifacts artifacts: 'project-code/plugin/target/**/play2-war-plugin*.jar', excludes: 'project-code/plugin/target/**/play2-war-plugin*-javadoc.jar, project-code/plugin/target/**/play2-war-plugin*-sources.jar', fingerprint: true
-                }
-            }
-        }
+      }
     }
-    post {
-        always {
-            step([$class: 'CordellWalkerRecorder'])
-            warnings(
-                    canComputeNew: false,
-                    canResolveRelativePaths: false,
-                    categoriesPattern: '',
-                    consoleParsers: [[parserName: 'Scala Compiler (scalac)']],
-                    defaultEncoding: '',
-                    excludePattern: '',
-                    healthy: '',
-                    includePattern: '',
-                    messagesPattern: '',
-                    unHealthy: ''
-            )
-            cleanWs()
-            step([
-                    $class                  : 'Mailer',
-                    notifyEveryUnstableBuild: true,
-                    recipients              : 'dev@idnow.de',
-                    sendToIndividuals       : true
-            ])
+    stage('Compile') {
+      steps {
+        script {
+          sh("sbt clean update compile")
         }
+      }
     }
+    stage('Package') {
+      steps {
+        script {
+          sh ("sbt publishLocal publish")
+          archiveArtifacts artifacts: 'project-code/plugin/target/**/play2-war-plugin*.jar', excludes: 'project-code/plugin/target/**/play2-war-plugin*-javadoc.jar, project-code/plugin/target/**/play2-war-plugin*-sources.jar', fingerprint: true
+        }
+      }
+    }
+  }
+  post {
+    always {
+      step([$class: 'CordellWalkerRecorder'])
+      cleanWs()
+    }
+  }
 }
