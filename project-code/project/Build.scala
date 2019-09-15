@@ -145,7 +145,7 @@ object Build extends Build {
 
   def mavenSettings = commonIvyMavenSettings ++ Seq(
     publishMavenStyle := true,
-    pomIncludeRepository := { _ => true },
+    pomIncludeRepository := { _ => false },
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) {
