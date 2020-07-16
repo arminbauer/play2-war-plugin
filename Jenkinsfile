@@ -36,6 +36,11 @@ pipeline {
       }
     }
     stage('Package') {
+      when {
+        allOf {
+          branch 'master'
+        }
+      }
       steps {
         script {
           dir('project-code') {
